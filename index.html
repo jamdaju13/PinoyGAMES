@@ -3996,7 +3996,6 @@
                 toastEl.classList.add('show');
                 setTimeout(() => {
                     toastEl.classList.remove('show');
-                    toastEl.textContent = 'SAVED';
                 }, 1500);
                 return;
             }
@@ -4009,6 +4008,7 @@
         player1Username = newUsername;
         document.getElementById('profile-avatar').textContent = (player1Username || '?').trim().slice(0, 2);
         localStorage.setItem('dg_localUsername', newUsername);
+        toastEl.textContent = 'SAVED';
         toastEl.classList.add('show');
         setTimeout(() => {
             toastEl.classList.remove('show');
