@@ -3721,7 +3721,7 @@
         </div>
 
         <div class="dashboard-tabs">
-            <button class="tab-btn active" onclick="switchTab('history')">History</button>
+            <button class="tab-btn active" onclick="switchTab('history')">Game History</button>
             <button class="tab-btn" onclick="switchTab('leaderboard')">Leaderboards</button>
             <button class="tab-btn" onclick="switchTab('players')">Players</button>
             <button class="tab-btn" onclick="switchTab('register')">Register</button>
@@ -5516,6 +5516,49 @@
             winnerIP: winnerIP || null,
             loserIP: loserIP || null
         });
+
+        if (!isDraw && winnerUsername) {
+            await autoAddRegisteredWinnerToLeaderboard(winnerUsername);
+        }
+    }
+
+    // ── Automatically adds a winning registered player's score to the
+    // leaderboard. Only usernames registered through the Admin Dashboard
+    // registration page are eligible. If the player already has a
+    // leaderboard entry, their winning score is added on top of their
+    // existing score instead of creating a duplicate entry. ──
+    async function autoAddRegisteredWinnerToLeaderboard(name) {
+        const registeredRef = window.firebaseRef(window.firebaseDB, 'registeredUsernames');
+        const registeredSnapshot = await window.firebaseGet(registeredRef);
+        let isRegistered = false;
+        if (registeredSnapshot.exists()) {
+            const data = registeredSnapshot.val();
+            isRegistered = Object.values(data).some(entry => entry.username === name);
+        }
+        if (!isRegistered) return;
+
+        const leaderboardRef = window.firebaseRef(window.firebaseDB, 'leaderboard');
+        const snapshot = await window.firebaseGet(leaderboardRef);
+        let existingEntry = null;
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            for (const [id, entry] of Object.entries(data)) {
+                if (entry.name === name) {
+                    existingEntry = { id, ...entry };
+                    break;
+                }
+            }
+        }
+        if (existingEntry) {
+            const entryRef = window.firebaseRef(window.firebaseDB, 'leaderboard/' + existingEntry.id);
+            await window.firebaseUpdate(entryRef, { score: existingEntry.score + 1 });
+        } else {
+            await window.firebasePush(leaderboardRef, { name, score: 1, timestamp: Date.now() });
+        }
+
+        // Invalidate the public leaderboard cache so the first page's
+        // leaderboard bubble reflects the updated score right away.
+        leaderboardCache = null;
     }
 
     // ── Atomic single-write guard: attempts to atomically flip
@@ -7328,6 +7371,7 @@
     window.addLeaderboardEntry = addLeaderboardEntry;
     window.deleteAllLeaderboard = deleteAllLeaderboard;
     window.deleteAllUsernames = deleteAllUsernames;
+    window.autoAddRegisteredWinnerToLeaderboard = autoAddRegisteredWinnerToLeaderboard;
     window.registerUsername = registerUsername;
     window.refreshRegisteredUsernames = refreshRegisteredUsernames;
     window.deleteRegisteredUsername = deleteRegisteredUsername;
