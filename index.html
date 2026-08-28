@@ -765,8 +765,6 @@
         top: 16px;
         left: 16px;
         background: rgba(26, 26, 26, 0.9);
-        background-size: cover;
-        background-position: center;
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 50%;
         width: 50px;
@@ -788,10 +786,6 @@
 
     #start-screen.hidden ~ .profile-bubble {
         display: none;
-    }
-
-    .profile-bubble.has-photo {
-        border: 2px solid #fff;
     }
 
     /* ── PLAYER PROFILE PAGE: full-screen page with editable username,
@@ -850,7 +844,7 @@
         border-radius: 20px;
         padding: 20px 28px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1);
-        max-width: 360px;
+        max-width: 480px;
         width: 100%;
         backdrop-filter: blur(10px);
         display: flex;
@@ -877,8 +871,6 @@
         color: #0a0a0a;
         text-transform: uppercase;
         background: linear-gradient(150deg, #FFE9A8 0%, #FFD700 45%, #B8860B 100%);
-        background-size: cover;
-        background-position: center;
         border: 3px solid rgba(255, 255, 255, 0.5);
         box-shadow: 0 0 24px rgba(255, 215, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.4);
         margin-bottom: 8px;
@@ -934,17 +926,6 @@
     .profile-card .continue-btn {
         padding: 10px 24px;
         font-size: 13px;
-    }
-
-    .profile-photo-save-row {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .profile-photo-save-row .continue-btn {
-        flex: 1;
-        margin-top: 0;
     }
 
     @media (max-width: 480px) {
@@ -2476,7 +2457,7 @@
         background: linear-gradient(160deg, #4E342E 0%, #2E1B12 55%, #1A100A 100%);
         border: 1px solid rgba(192, 133, 82, 0.25);
         border-radius: 22px;
-        max-width: 390px;
+        max-width: 520px;
         width: 100%;
         max-height: 88vh;
         display: flex;
@@ -3049,22 +3030,6 @@
         color: #999;
     }
 
-    .leaderboard-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 15px;
-        font-weight: 700;
-        color: #0a0a0a;
-        text-transform: uppercase;
-        background: linear-gradient(150deg, #FFE9A8 0%, #FFD700 45%, #B8860B 100%);
-        flex-shrink: 0;
-        overflow: hidden;
-    }
-
     .leaderboard-info {
         flex: 1;
         display: flex;
@@ -3349,6 +3314,18 @@
 
     .players-table td.win-cell { color: #A0522D; font-weight: 600; }
     .players-table td.loss-cell { color: #f44336; font-weight: 600; }
+
+    #registered-table-body td:first-child {
+        width: 100%;
+    }
+
+    #registered-table-body td:last-child {
+        text-align: right;
+    }
+
+    #registered-table-body td.no-games {
+        text-align: center;
+    }
 
     /* ══════════════════════════════════════════════════════════════
    PREMIUM PLAYER PROFILE OVERLAY — replaces the old
@@ -3685,7 +3662,7 @@
         </div>
     </div>
 
-    <div class="profile-bubble" id="profile-bubble" onclick="openProfile()">👤</div>
+    <div class="profile-bubble" onclick="openProfile()">👤</div>
 
     <div id="profile-screen">
         <div id="profile-toast" class="profile-toast">SAVED</div>
@@ -3698,11 +3675,7 @@
             <div class="profile-section">
                 <label class="input-label" for="profile-username"></label>
                 <input type="text" id="profile-username" class="username-input" placeholder="USERNAME" maxlength="20" autocomplete="off">
-                <input type="file" id="profile-photo-input" accept="image/*" style="display:none" onchange="handleProfilePhotoUpload(event)">
-                <div class="profile-photo-save-row">
-                    <button class="continue-btn" onclick="saveProfileUsername()">Save</button>
-                    <button class="continue-btn" onclick="document.getElementById('profile-photo-input').click()">Upload Photo</button>
-                </div>
+                <button class="continue-btn" onclick="saveProfileUsername()">Save</button>
             </div>
 
             <div class="profile-section profile-actions">
@@ -3748,9 +3721,10 @@
         </div>
 
         <div class="dashboard-tabs">
-            <button class="tab-btn active" onclick="switchTab('history')">Game History</button>
+            <button class="tab-btn active" onclick="switchTab('history')">History</button>
             <button class="tab-btn" onclick="switchTab('leaderboard')">Leaderboards</button>
             <button class="tab-btn" onclick="switchTab('players')">Players</button>
+            <button class="tab-btn" onclick="switchTab('register')">Register</button>
         </div>
 
         <div id="history-tab" class="tab-content active">
@@ -3839,6 +3813,32 @@
                     </thead>
                     <tbody id="players-table-body">
                         <tr><td colspan="1" class="no-games">No players found</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="register-tab" class="tab-content">
+            <div class="dashboard-controls">
+                <div class="control-row">
+                    <input type="text" id="register-username-input" class="control-input" placeholder="Enter Username">
+                    <button class="control-btn" onclick="registerUsername()">Register</button>
+                    <button class="control-btn danger" onclick="deleteAllRegisteredUsernames()">Delete</button>
+                </div>
+                <div class="control-row">
+                    <input type="text" id="search-registered" class="control-input" placeholder="Search Registered Username">
+                </div>
+            </div>
+            <div class="players-table-wrap">
+                <table class="players-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="registered-table-body">
+                        <tr><td colspan="2" class="no-games">No registered usernames</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -4164,7 +4164,6 @@
     // ── OPTIMIZATION: cache leaderboard data to avoid re-fetching on every modal open ──
     let leaderboardCache = null;
     let leaderboardCacheTime = 0;
-    let photosCache = {};
     const LEADERBOARD_CACHE_TTL = 30000; // 30 seconds
 
     // ── OPTIMIZATION: pre-cache DOM references used heavily in render() ──
@@ -4555,39 +4554,10 @@
 
     async function openProfile() {
         document.getElementById('profile-username').value = player1Username || '';
-        const savedPhoto = localStorage.getItem('dg_localProfilePhoto');
-        const avatarEl = document.getElementById('profile-avatar');
-        if (savedPhoto) {
-            avatarEl.style.backgroundImage = `url('${savedPhoto}')`;
-            avatarEl.textContent = '';
-        } else {
-            avatarEl.style.backgroundImage = '';
-            avatarEl.textContent = (player1Username || '?').trim().slice(0, 2);
-        }
+        document.getElementById('profile-avatar').textContent = (player1Username || '?').trim().slice(0, 2);
         document.getElementById('start-screen').classList.add('hidden');
         broadcastOnFirstPage();
         document.getElementById('profile-screen').classList.add('show');
-    }
-
-    function handleProfilePhotoUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const dataUrl = e.target.result;
-            localStorage.setItem('dg_localProfilePhoto', dataUrl);
-            const avatarEl = document.getElementById('profile-avatar');
-            avatarEl.style.backgroundImage = `url('${dataUrl}')`;
-            avatarEl.textContent = '';
-            const bubbleEl = document.getElementById('profile-bubble');
-            bubbleEl.style.backgroundImage = `url('${dataUrl}')`;
-            bubbleEl.textContent = '';
-            bubbleEl.classList.add('has-photo');
-            if (player1Username) {
-                window.firebaseSet(window.firebaseRef(window.firebaseDB, 'profilePhotos/' + player1Username), dataUrl);
-            }
-        };
-        reader.readAsDataURL(file);
     }
 
     function closeProfile() {
@@ -4620,9 +4590,7 @@
             await window.firebaseSet(usernameRef, true);
         }
         player1Username = newUsername;
-        if (!localStorage.getItem('dg_localProfilePhoto')) {
-            document.getElementById('profile-avatar').textContent = (player1Username || '?').trim().slice(0, 2);
-        }
+        document.getElementById('profile-avatar').textContent = (player1Username || '?').trim().slice(0, 2);
         localStorage.setItem('dg_localUsername', newUsername);
         setPresenceUsername(player1Username);
         toastEl.textContent = 'SAVED';
@@ -4646,7 +4614,7 @@
         const now = Date.now();
         // Use cache if still fresh
         if (leaderboardCache && (now - leaderboardCacheTime) < LEADERBOARD_CACHE_TTL) {
-            renderPublicLeaderboard(leaderboardCache, photosCache);
+            renderPublicLeaderboard(leaderboardCache);
             return;
         }
 
@@ -4655,15 +4623,11 @@
         const data = snapshot.exists() ? snapshot.val() : null;
         leaderboardCache = data;
         leaderboardCacheTime = now;
-        const photosRef = window.firebaseRef(window.firebaseDB, 'profilePhotos');
-        const photosSnapshot = await window.firebaseGet(photosRef);
-        const photosData = photosSnapshot.exists() ? photosSnapshot.val() : {};
-        photosCache = photosData;
-        renderPublicLeaderboard(data, photosData);
+        renderPublicLeaderboard(data);
     }
 
     // ── PODIUM (Top 3) + RANKED LIST (1–100) RENDER ──
-    function renderPublicLeaderboard(data, photosData) {
+    function renderPublicLeaderboard(data) {
         const container = document.getElementById('public-leaderboard-body');
         if (!data) {
             container.innerHTML = '<div class="no-leaderboard">No leaderboard entries available</div>';
@@ -4675,11 +4639,6 @@
             .sort((a, b) => b.score - a.score);
 
         const getInitials = (name) => (name || '?').trim().slice(0, 2);
-        const savedPhoto = localStorage.getItem('dg_localProfilePhoto');
-        const getAvatarInner = (name) => {
-            const photo = (photosData && photosData[name]) || (name === player1Username ? savedPhoto : null);
-            return photo ? `<img src="${photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : getInitials(name);
-        };
 
         const top3 = entries.slice(0, 3);
         const rest = entries.slice(3, 100);
@@ -4697,7 +4656,7 @@
                 parts.push(`
                     <div class="lb-podium-slot rank-${rank}">
                         ${rank === 1 ? '<div class="lb-podium-crown">👑</div>' : ''}
-                        <div class="lb-podium-avatar">${getAvatarInner(entry.name)}</div>
+                        <div class="lb-podium-avatar">${getInitials(entry.name)}</div>
                         <div class="lb-podium-name">${entry.name}</div>
                         <div class="lb-podium-score">${entry.score.toLocaleString()}</div>
                         <div class="lb-podium-base">${rank}</div>
@@ -4715,7 +4674,7 @@
                 parts.push(`
                     <div class="lb-list-row">
                         <div class="lb-rank-num">${rank}</div>
-                        <div class="lb-list-avatar">${getAvatarInner(entry.name)}</div>
+                        <div class="lb-list-avatar">${getInitials(entry.name)}</div>
                         <div class="lb-list-name">${entry.name}</div>
                         <div class="lb-list-score">${entry.score.toLocaleString()}</div>
                     </div>`);
@@ -4742,16 +4701,16 @@
             document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
             document.getElementById('players-tab').classList.add('active');
             refreshPlayersList();
+        } else if (tab === 'register') {
+            document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
+            document.getElementById('register-tab').classList.add('active');
+            refreshRegisteredUsernames();
         }
     }
 
     // ── OPTIMIZATION: detach previous listener before attaching a new one to prevent duplicates ──
     async function loadAdminLeaderboard() {
         const leaderboardRef = window.firebaseRef(window.firebaseDB, 'leaderboard');
-
-        const photosRef = window.firebaseRef(window.firebaseDB, 'profilePhotos');
-        const photosSnapshot = await window.firebaseGet(photosRef);
-        const adminPhotosData = photosSnapshot.exists() ? photosSnapshot.val() : {};
 
         if (leaderboardListener) {
             window.firebaseOff(leaderboardRef);
@@ -4779,13 +4738,9 @@
                     else if (rank === 2) badgeClass = 'silver';
                     else if (rank === 3) badgeClass = 'bronze';
 
-                    const entryPhoto = adminPhotosData && adminPhotosData[entry.name];
-                    const avatarInner = entryPhoto ? `<img src="${entryPhoto}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` : (entry.name || '?').trim().slice(0, 2);
-
                     parts.push(`
                         <div class="leaderboard-item">
                             <div class="rank-badge ${badgeClass}">${rank}</div>
-                            <div class="leaderboard-avatar">${avatarInner}</div>
                             <div class="leaderboard-info">
                                 <div class="leaderboard-name">${entry.name}</div>
                                 <div class="leaderboard-score">${entry.score.toLocaleString()}</div>
@@ -4839,6 +4794,58 @@
         await window.firebaseSet(window.firebaseRef(window.firebaseDB, 'usernameResetSignal'), Date.now());
     }
 
+    async function registerUsername() {
+        const input = document.getElementById('register-username-input');
+        const username = input.value.trim();
+        if (!username) {
+            alert('Please enter a username.');
+            return;
+        }
+        const registeredRef = window.firebaseRef(window.firebaseDB, 'registeredUsernames');
+        await window.firebasePush(registeredRef, { username, timestamp: Date.now() });
+        input.value = '';
+        refreshRegisteredUsernames();
+    }
+
+    async function refreshRegisteredUsernames() {
+        const registeredRef = window.firebaseRef(window.firebaseDB, 'registeredUsernames');
+        const snapshot = await window.firebaseGet(registeredRef);
+        const tbody = document.getElementById('registered-table-body');
+        const searchVal = (document.getElementById('search-registered').value || '').toLowerCase();
+
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const entries = Object.entries(data)
+                .filter(([id, entry]) => !searchVal || entry.username.toLowerCase().includes(searchVal))
+                .sort((a, b) => (a[1].timestamp || 0) - (b[1].timestamp || 0));
+            if (entries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="2" class="no-games">No registered usernames</td></tr>';
+                return;
+            }
+            tbody.innerHTML = entries.map(([id, entry]) => `
+                <tr>
+                    <td>${entry.username}</td>
+                    <td><button class="action-btn delete" onclick="deleteRegisteredUsername('${id}')">🗑️</button></td>
+                </tr>`).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="2" class="no-games">No registered usernames</td></tr>';
+        }
+    }
+
+    async function deleteRegisteredUsername(id) {
+        if (!confirm('Are you sure you want to delete this registered username?')) return;
+        const entryRef = window.firebaseRef(window.firebaseDB, 'registeredUsernames/' + id);
+        await window.firebaseRemove(entryRef);
+        refreshRegisteredUsernames();
+    }
+
+    async function deleteAllRegisteredUsernames() {
+        if (!confirm('Are you sure you want to delete all registered usernames?')) return;
+        const registeredRef = window.firebaseRef(window.firebaseDB, 'registeredUsernames');
+        await window.firebaseRemove(registeredRef);
+        refreshRegisteredUsernames();
+    }
+
     function editLeaderboardEntry(id) {
         const entry = allLeaderboardData.find(e => e.id === id);
         if (!entry) return;
@@ -4880,12 +4887,26 @@
         const name = game.winnerUsername;
         if (!name) return;
         if (!confirm('Add "' + name + '" to the leaderboard?')) return;
-        const existingEntry = allLeaderboardData.find(e => e.name === name);
+        const leaderboardRef = window.firebaseRef(window.firebaseDB, 'leaderboard');
+        // Look up the current leaderboard directly from Firebase (instead of the
+        // local allLeaderboardData cache, which may still be empty if the admin
+        // hasn't opened the Leaderboard tab yet) so an existing username is
+        // always found and incremented instead of duplicated.
+        const snapshot = await window.firebaseGet(leaderboardRef);
+        let existingEntry = null;
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            for (const [id, entry] of Object.entries(data)) {
+                if (entry.name === name) {
+                    existingEntry = { id, ...entry };
+                    break;
+                }
+            }
+        }
         if (existingEntry) {
             const entryRef = window.firebaseRef(window.firebaseDB, 'leaderboard/' + existingEntry.id);
             await window.firebaseUpdate(entryRef, { score: existingEntry.score + 1 });
         } else {
-            const leaderboardRef = window.firebaseRef(window.firebaseDB, 'leaderboard');
             await window.firebasePush(leaderboardRef, { name, score: 1, timestamp: Date.now() });
         }
         alert('Added to leaderboard.');
@@ -5034,6 +5055,7 @@
 
     document.addEventListener('input', function(e) {
         if (e.target && e.target.id === 'search-player') refreshPlayersList();
+        if (e.target && e.target.id === 'search-registered') refreshRegisteredUsernames();
     });
 
     function openPlayerHistory(name) {
@@ -7283,17 +7305,6 @@
     }
 
     player1Username = localStorage.getItem('dg_localUsername') || '';
-    (function applySavedProfilePhotoToBubble() {
-        const savedPhoto = localStorage.getItem('dg_localProfilePhoto');
-        if (savedPhoto) {
-            const bubbleEl = document.getElementById('profile-bubble');
-            if (bubbleEl) {
-                bubbleEl.style.backgroundImage = `url('${savedPhoto}')`;
-                bubbleEl.textContent = '';
-                bubbleEl.classList.add('has-photo');
-            }
-        }
-    })();
 
     // Run reconnection check on page load
     window.addEventListener('load', async () => {
@@ -7317,6 +7328,10 @@
     window.addLeaderboardEntry = addLeaderboardEntry;
     window.deleteAllLeaderboard = deleteAllLeaderboard;
     window.deleteAllUsernames = deleteAllUsernames;
+    window.registerUsername = registerUsername;
+    window.refreshRegisteredUsernames = refreshRegisteredUsernames;
+    window.deleteRegisteredUsername = deleteRegisteredUsername;
+    window.deleteAllRegisteredUsernames = deleteAllRegisteredUsernames;
     window.editLeaderboardEntry = editLeaderboardEntry;
     window.closeEditLeaderboard = closeEditLeaderboard;
     window.saveLeaderboardEdit = saveLeaderboardEdit;
@@ -7339,7 +7354,6 @@
     window.openProfile = openProfile;
     window.closeProfile = closeProfile;
     window.saveProfileUsername = saveProfileUsername;
-    window.handleProfilePhotoUpload = handleProfilePhotoUpload;
 </script>
 </body>
 </html>
