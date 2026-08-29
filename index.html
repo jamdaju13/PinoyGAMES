@@ -3145,9 +3145,20 @@
             width: 100%;
         }
 
+        .dashboard-tabs {
+            gap: 6px;
+            padding: 12px;
+        }
+
         .tab-btn {
-            font-size: 10px;
-            padding: 10px 12px;
+            flex: 1;
+            min-width: 0;
+            font-size: 9px;
+            padding: 10px 4px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     }
 
@@ -3316,7 +3327,7 @@
     .players-table td.loss-cell { color: #f44336; font-weight: 600; }
 
     #registered-table-body td:first-child {
-        width: 100%;
+        width: auto;
     }
 
     #registered-table-body td:last-child {
@@ -3721,7 +3732,7 @@
         </div>
 
         <div class="dashboard-tabs">
-            <button class="tab-btn active" onclick="switchTab('history')">History</button>
+            <button class="tab-btn active" onclick="switchTab('history')">Game History</button>
             <button class="tab-btn" onclick="switchTab('leaderboard')">Leaderboards</button>
             <button class="tab-btn" onclick="switchTab('players')">Players</button>
             <button class="tab-btn" onclick="switchTab('register')">Register</button>
