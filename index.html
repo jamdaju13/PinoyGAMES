@@ -1999,8 +1999,7 @@
         display: none;
         flex-direction: column;
         z-index: 3000;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+        overflow: hidden;
     }
 
     #admin-dashboard.show {
@@ -2059,6 +2058,13 @@
         background: #795548;
         color: #ffffff;
         border-color: #795548;
+    }
+
+    .dashboard-content-wrap {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
     }
 
     .tab-content {
@@ -3738,6 +3744,7 @@
             <button class="tab-btn" onclick="switchTab('register')">Register</button>
         </div>
 
+        <div class="dashboard-content-wrap">
         <div id="history-tab" class="tab-content active">
             <div class="dashboard-controls">
                 <div class="control-row">
@@ -3853,6 +3860,7 @@
                     </tbody>
                 </table>
             </div>
+        </div>
         </div>
     </div>
 
