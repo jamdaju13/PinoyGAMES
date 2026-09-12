@@ -6110,7 +6110,7 @@
                     // picks up the fresh round via its own room listener.
                     setTimeout(() => {
                         proceedToNextRound();
-                    }, 1000);
+                    }, 2000);
                 }
             }
             // If the lock was lost, the other client is already applying this
@@ -6126,7 +6126,7 @@
                 gameScreenEl.style.display = 'none';
                 showRoundWinnerScreen(bannerWinnerUsername);
             }
-        }, 300);
+        }, 0);
     }
 
     function spectateGame() {
